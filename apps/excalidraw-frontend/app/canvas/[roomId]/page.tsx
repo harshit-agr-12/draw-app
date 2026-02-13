@@ -1,15 +1,20 @@
+
+import {  ShapeProvider } from "@/hooks/shapeContext";
+import { ToolBar } from "@/components/ToolBar";
 import { Canvas } from "@/components/Canvas";
 
+  export default async function Page({params} :{
+    params: {
+      roomId: string
+    }
+  }) {
 
-export default async function CanvasPage({params} : {
-    params: {roomId: string}
-}) {
+  const roomId = (await params).roomId;
 
-
-    const roomId =  (await params).roomId as string;
-    console.log("roomId", roomId)
-
-    return <Canvas roomId={roomId} />
-
-
+  return (
+    <ShapeProvider>
+      <ToolBar />
+      <Canvas roomId={roomId} />
+    </ShapeProvider>
+  );
 }

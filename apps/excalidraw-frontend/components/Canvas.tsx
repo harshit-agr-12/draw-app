@@ -1,7 +1,7 @@
 "use client"
 import { draw } from "@/utils/draw";
-import { useEffect, useRef, useState } from "react";
-import { ToolBar } from "./ToolBar";
+import { useContext, useEffect, useRef, useState } from "react";
+import { ShapeContext } from "@/hooks/shapeContext";
 
   type rectagle = {
     type: "rectangle";
@@ -11,11 +11,15 @@ import { ToolBar } from "./ToolBar";
     h: number;
   };
 
-  type circle = {
-    type: "circle";
+  type ellipse = {
+    type: "ellipse";
     x: number;
     y: number;
-    radius: number;
+    radiusX: number;
+    radiusY: number;
+    rotation: number; //Math.PI / 4 for 45 degrees
+    startAngle: number; // 0
+    endAngle: number; // Math.PI * 2 for full circle
   };
 
   type line = {
@@ -41,41 +45,39 @@ import { ToolBar } from "./ToolBar";
     text: string;
   };
 
-  export type Shapes = rectagle | circle | line | arrow | text;
+  export type Shapes = rectagle | ellipse | line | arrow | text;
 
 
 
 
 export function Canvas({roomId} : {
-    roomId : string
+  roomId : string
 }){
     const canvasRef = useRef<HTMLCanvasElement>(null);
-    const [shapeType, setShapeType] = useState("rectangle");
+    const {shapeType} = useContext(ShapeContext);
+    const shapeTypeRef = useRef(shapeType);
     const [existingCanvas, setExistingCanvas] = useState<Shapes[]>([]);
 
 
-    useEffect(() => {
-        if (canvasRef.current) {
-            draw(canvasRef.current, shapeType , existingCanvas , setExistingCanvas);
-        
-        }
-}, [canvasRef, shapeType, existingCanvas])
 
-    return (<div className="bg-black h-full w-full">
-        <div className="float-center bg-amber-600" >
-            <button className="bg-amber-400 absolute p-2 rounded-lg" onClick={() => {
-                if(canvasRef.current){
-                    const link = canvasRef.current.toDataURL("image/png");
-                    const a = document.createElement("a");
-                    a.href = link;
-                    a.download = "canvas.png";
-                    a.click();
-                }
-            }}>Download</button>
-        </div>
-        <div className="float-right">
-            <ToolBar setShapeType={setShapeType}  />
-        </div>
+    useEffect(() => {
+        shapeTypeRef.current = shapeType;
+        console.log("shapeTypeRef updated to:", shapeType);
+    }, [shapeType]);
+
+    useEffect(() => {
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const cleanup = draw(canvas, shapeTypeRef, existingCanvas, setExistingCanvas);
+
+        return cleanup;
+    }, []);
+
+    return (<div className="bg-white h-full w-full">
         <canvas height={1000} width={2000}  ref={canvasRef} ></canvas>
     </div>)
 }

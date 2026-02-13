@@ -1,63 +1,45 @@
+"use client"
+import { ShapeContext } from "@/hooks/shapeContext";
+import { useContext, useEffect } from "react";
+
+export function ToolBar() {
 
 
+  const { shapeType, setShapeType } = useContext(ShapeContext);
 
-export function ToolBar({ setShapeType} : {
-    setShapeType: React.Dispatch<React.SetStateAction<string>>,
-} ){
+  // Debug: This will log when shapeType actually changes
+  useEffect(() => {
+    console.log("shapeType changed to:", shapeType);
+  }, [shapeType]);
 
-    function changeShape(shapeType: string){
-        console.log("shapeType", shapeType)
+  function changeShape(Type: string) {
+    console.log("Setting shape to:", Type);
+    setShapeType(Type);
+    // Don't log shapeType here - it won't be updated yet!
+  }
 
-        setShapeType(shapeType);
+  const shapes = [
+    { type: "rectangle" },
+    { type: "ellipse" },
+    { type: "line" },
+    { type: "arrow" },
+    { type: "text" },
+    { type: "select" },
+  ];
 
-    }
-
-
-    const shapes = [
-        {
-            type : "circle",
-            x : Number,
-            y : Number,
-            radius : Number,
-        },
-        {
-            type : "rectangle",
-            x : Number,
-            y : Number,
-            w : Number,
-            h : Number,
-        },
-        {
-            type : "line",
-            x1 : Number,
-            y1 : Number,
-            x2 : Number,
-            y2 : Number,
-        },
-        {
-            type : "arrow",
-            x1 : Number,
-            y1 : Number,
-            x2 : Number,
-            y2 : Number,
-        },
-        {
-            type : "text",
-            x : Number,
-            y : Number,
-            text : String,
-        },
-        {
-            type : "select",
-        }
-    ]
-
-    return<div className="text-white absolute top-10 left-0 m-4 flex flex-col gap-2">
-        {/* <Lock /> */}
-        {shapes.map((shape) => {
-            return <button key={shape.type} className="bg-gray-700 p-2 rounded-lg cursor-pointer hover:bg-gray-800 " onClick={() => changeShape(shape.type)}>
-                {shape.type}
-            </button>
-        })}
+  return (
+    <div className="text-white absolute top-10 left-0 m-4 flex flex-col gap-2">
+      {shapes.map((shape) => (
+        <button
+          key={shape.type}
+          className={`p-2 rounded-lg cursor-pointer ${
+            shapeType === shape.type ? "bg-blue-600" : "bg-gray-700 hover:bg-gray-800"
+          }`}
+          onClick={() => changeShape(shape.type)}
+        >
+          {shape.type}
+        </button>
+      ))}
     </div>
-}   
+  );
+}

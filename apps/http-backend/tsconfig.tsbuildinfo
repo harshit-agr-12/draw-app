@@ -1,1 +1,12 @@
-{"root":["./src/custom.d.ts","./src/index.ts","./src/middleware.ts"],"version":"5.9.3"}
+{
+    "root": [
+        "./src/custom.d.ts",
+        "./src/index.ts",
+        "./src/middleware.ts",
+        "./src/controllers/authController.ts",
+        "./src/controllers/roomController.ts",
+        "./src/routes/room.ts",
+        "./src/routes/user.ts"
+    ],
+    "version": "5.9.3"
+}
